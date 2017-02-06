@@ -275,7 +275,7 @@ ConfigureClient()
         HNAME=${USER_AGENT_SERVER_NAME}
     fi
 
-    # Syscheck?
+    # Syscheck? 
     UseSyscheck
 
     # Rootcheck?
@@ -336,12 +336,12 @@ ConfigureServer()
             $ECHO "   - ${whatsemail} "
             if [ "X${USER_EMAIL_ADDRESS}" = "X" ]; then
 
-                EMAIL="security@yello.co"
+                EMAIL="phil.prescher@yello.co"
                 echo "${EMAIL}" | grep -E "^[a-zA-Z0-9_.+-]{1,36}@[a-zA-Z0-9_.-]{1,54}$" > /dev/null 2>&1 ;RVAL=$?;
                 # Ugly e-mail validation
                 while [ "$EMAIL" = "" -o ! ${RVAL} = 0 ] ; do
                     $ECHO "   - ${whatsemail} "
-                    EMAIL="security@yello.co"
+                    EMAIL="phil.prescher@yello.co"
                     echo "${EMAIL}" | grep -E "^[a-zA-Z0-9_.+-]{1,36}@[a-zA-Z0-9_.-]{1,54}$" > /dev/null 2>&1 ;RVAL=$?;
                 done
             else
