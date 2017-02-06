@@ -153,7 +153,7 @@ UseSyscheck()
     echo ""
     $ECHO "  3.2- ${runsyscheck} ($yes/$no) [$yes]: "
     if [ "X${USER_ENABLE_SYSCHECK}" = "X" ]; then
-        read AS
+        AS="y"
     else
         AS=${USER_ENABLE_SYSCHECK}
     fi
@@ -180,7 +180,7 @@ UseRootcheck()
     $ECHO "  3.3- ${runrootcheck} ($yes/$no) [$yes]: "
 
     if [ "X${USER_ENABLE_ROOTCHECK}" = "X" ]; then
-        read ES
+        ES="y"
     else
         ES=${USER_ENABLE_ROOTCHECK}
     fi
@@ -206,7 +206,7 @@ UseOpenSCAP()
     echo ""
     $ECHO "  3.4- ${runopenscap} ($yes/$no) [$yes]: "
     if [ "X${USER_ENABLE_OPENSCAP}" = "X" ]; then
-        read AS
+        AS="y"
     else
         AS=${USER_ENABLE_OPENSCAP}
     fi
@@ -238,9 +238,6 @@ SetupLogs()
     echo ""
     catMsg "0x106-logs"
 
-    if [ "X$USER_NO_STOP" = "X" ]; then
-        read ANY
-    fi
 }
 
 
@@ -291,7 +288,7 @@ ConfigureClient()
     $ECHO "  3.5 - ${enable_ar} ($yes/$no) [$yes]: "
 
     if [ "X${USER_ENABLE_ACTIVE_RESPONSE}" = "X" ]; then
-        read ANY
+        ANY="y"
     else
         ANY=${USER_ENABLE_ACTIVE_RESPONSE}
     fi
@@ -328,7 +325,7 @@ ConfigureServer()
     $ECHO "  3.1- ${mailnotify} ($yes/$no) [$no]: "
 
     if [ "X${USER_ENABLE_EMAIL}" = "X" ]; then
-        read ANSWER
+        ANSWER="y"
     else
         ANSWER=${USER_ENABLE_EMAIL}
     fi
@@ -339,12 +336,12 @@ ConfigureServer()
             $ECHO "   - ${whatsemail} "
             if [ "X${USER_EMAIL_ADDRESS}" = "X" ]; then
 
-                read EMAIL
+                EMAIL="security@yello.co"
                 echo "${EMAIL}" | grep -E "^[a-zA-Z0-9_.+-]{1,36}@[a-zA-Z0-9_.-]{1,54}$" > /dev/null 2>&1 ;RVAL=$?;
                 # Ugly e-mail validation
                 while [ "$EMAIL" = "" -o ! ${RVAL} = 0 ] ; do
                     $ECHO "   - ${whatsemail} "
-                    read EMAIL
+                    EMAIL="security@yello.co"
                     echo "${EMAIL}" | grep -E "^[a-zA-Z0-9_.+-]{1,36}@[a-zA-Z0-9_.-]{1,54}$" > /dev/null 2>&1 ;RVAL=$?;
                 done
             else
@@ -375,7 +372,7 @@ ConfigureServer()
                     echo ""
                     echo "   - ${yoursmtp}: ${SMTPHOST}"
                     $ECHO "   - ${usesmtp} ($yes/$no) [$yes]: "
-                    read EMAIL2
+                    EMAIL2="n"
                     case ${EMAIL2} in
                         $nomatch)
                         echo ""
@@ -391,7 +388,7 @@ ConfigureServer()
 
                 if [ "X${SMTP}" = "X" ]; then
                     $ECHO "   - ${whatsmtp} "
-                    read SMTP
+                    SMTP="aspmx.l.google.com"
                 fi
             else
                 SMTP=${USER_EMAIL_SMTP}
@@ -434,7 +431,7 @@ ConfigureServer()
       $ECHO "  3.6- ${syslog} ($yes/$no) [$yes]: "
 
       if [ "X${USER_ENABLE_SYSLOG}" = "X" ]; then
-        read ANSWER
+        ANSWER="n"
       else
         ANSWER=${USER_ENABLE_SYSLOG}
       fi
@@ -473,7 +470,7 @@ setEnv()
     if [ "X${USER_DIR}" = "X" ]; then
         while [ 1 ]; do
             $ECHO " - ${wheretoinstall} [$INSTALLDIR]: "
-            read ANSWER
+            ANSWER="/var/ossec"
             if [ ! "X$ANSWER" = "X" ]; then
                 echo $ANSWER |grep -E "^/[a-zA-Z0-9./_-]{3,128}$">/dev/null 2>&1
                 if [ $? = 0 ]; then
@@ -505,7 +502,7 @@ setEnv()
         if [ "X${USER_DELETE_DIR}" = "X" ]; then
             echo ""
             $ECHO "    - ${deletedir} ($yes/$no) [$yes]: "
-            read ANSWER
+            ANSWER="y"
         else
             ANSWER=${USER_DELETE_DIR}
         fi
@@ -553,7 +550,7 @@ AddWhite()
 
         # If white list is set, we don't need to ask it here.
         if [ "X${USER_WHITE_LIST}" = "X" ]; then
-            read ANSWER
+            ANSWER="n"
         else
             ANSWER=$yes
         fi
@@ -637,7 +634,7 @@ main()
             fi
         done
         $ECHO "  (${LG}) [en]: "
-        read USER_LG;
+        USER_LG="en";
 
         if [ "X${USER_LG}" = "X" ]; then
             USER_LG="en"
@@ -695,10 +692,6 @@ main()
     echo ""
     echo "  -- $hitanyorabort --"
 
-    if [ "X$USER_NO_STOP" = "X" ]; then
-        read ANY
-    fi
-
     . ./src/init/update.sh
     # Is this an update?
     if [ "`isUpdate`" = "${TRUE}" -a "x${USER_CLEANINSTALL}" = "x" ]; then
@@ -707,11 +700,7 @@ main()
         while [ $ct = "1" ]; do
             ct="0"
             $ECHO " - ${wanttoupdate} ($yes/$no): "
-            if [ "X${USER_UPDATE}" = "X" ]; then
-                read ANY
-            else
-                ANY=$yes
-            fi
+            ANY=$no
 
             case $ANY in
                 $yes)
@@ -775,7 +764,7 @@ main()
             echo ""
             $ECHO "1- ${whattoinstall} "
 
-            read ANSWER
+            ANSWER="server"
             case $ANSWER in
 
                 ${helpm}|${help})
@@ -858,9 +847,6 @@ main()
     if [ "X${update_only}" = "Xyes" ]; then
         # Message for the update
         if [ "X`sh ./src/init/fw-check.sh`" = "XPF" -a "X${ACTIVERESPONSE}" = "Xyes" ]; then
-            if [ "X$USER_NO_STOP" = "X" ]; then
-                read ANY
-            fi
             AddPFTable
         fi
         echo ""
@@ -876,11 +862,6 @@ main()
         echo " - ${updatecompleted}"
         echo ""
         exit 0;
-    fi
-
-
-    if [ "X$USER_NO_STOP" = "X" ]; then
-        read ANY
     fi
 
 
